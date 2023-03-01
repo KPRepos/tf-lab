@@ -1,8 +1,9 @@
 
-## Primary Resources deployed by this code
-`VPC with 3 subnets(Public,Private and Intra), bastionec2, mongodb, secretsmanager for mongo secret, EKS, EKS-ALB addon, OIDC Provider for RBAC, S3 Buckets `
+### Primary Resources deployed by this code
+`VPC with 3 subnets(Public,Private and Intra), bastion, mongodb, secretsmanager for mongo secret, EKS, EKS-ALB addon, OIDC Provider for RBAC, S3 Bucket(Public) `
  ` Modules and Git Repos are locally downloaded to avoid any git pinning and custom code changes`
-###Process 
+ 
+### Process 
 
 Infra:- 
 
@@ -11,14 +12,14 @@ Infra:-
 3) ` Terraform init`
    `Terraform apply`
 
-# EKS
+## EKS
 
 ## Make sure you have eksctl and lubectl 
 `curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 sudo mv /tmp/eksctl /usr/local/bin
 eksctl version`
 
-#Steps
+## Testing
 ## https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
 1) Update kubeconfig
 `aws eks update-kubeconfig --region us-west-2 --name eks-lab`
@@ -31,8 +32,8 @@ kubectl get ingress/ingress-2048 -n game-2048
 `kubectl apply -f eks/shell-demo.yaml`
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
 
-## The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have s3:GetBucket", "s3:GetObject", "s3:PutObject access on * 
-## Example test - 
+The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have s3:GetBucket", "s3:GetObject", "s3:PutObject access on * 
+### Example test - 
 `apt-get update`
 `apt-get install -y awscli`
 `touch test-rbac`
@@ -49,13 +50,13 @@ helm install my-release bitnami/jenkins
 4) Tags can be appended to IAM and S3 to support multi env deploymenet within same AWS Account
 
 
-# Troubleshooting commands
+### Troubleshooting commands
 
 `aws secretsmanager delete-secret --secret-id mongoadminUserpassword --force-delete-without-recovery --region us-west-2`
 
-# Secrets manager should be in place before mongo and bastion works
+### Secrets manager should be in place before mongo and bastion works
 
-# Login to bastion using ssm 
+### Login to bastion using ssm 
 
 `aws ssm start-session --target i-04103fb0104ed83e7 --region us-west-2`
 sudo su - ec2-user 
