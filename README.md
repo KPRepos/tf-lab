@@ -26,6 +26,7 @@ eksctl version`
 ## Testing
 1) Update kubeconfig
 `aws eks update-kubeconfig --region us-west-2 --name eks-lab`
+
 2) #Apply yaml config to deploy web app  - port 80
 ` update security group ID in annotation (tem workaround) with name alb_security_group_eks_custom from vpc security groups- alb.ingress.kubernetes.io/security-groups: sg-02c626328ebe4b8aa`
 `kubectl apply -f eks/2048_full.yaml`
@@ -45,6 +46,13 @@ The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have
 `apt-get install -y awscli`
 `touch test-rbac`
 `aws s3api put-object --bucket test44242 --key test-rbac --body ./test-rbac`
+####  lab-eks-pod-cluster-admin service account was mapped toa custom cluster-admin role with admin privilages 
+### Test 
+`kubectl exec --stdin --tty shell-demo -- /bin/bash`
+`apt-get update`
+`apt-get install -y curl`
+`curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"`
+`install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl`
 
 
 3) helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -67,3 +75,5 @@ helm install my-release bitnami/jenkins
 
 `aws ssm start-session --target i-04103fb0104ed83e7 --region us-west-2`
 sudo su - ec2-user 
+
+

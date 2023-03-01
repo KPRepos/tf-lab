@@ -30,4 +30,4 @@ s3cmd put mongodb-$HOSTNAME-$TIMESTAMP.tar s3://${backup_s3_bucket}/mongodb-back
 rm -rf mongodb-*
 EOL
 sudo chmod +x /home/ec2-user/mongo-backup.sh 
-sudo sh -c 'echo "*/3 * * * * /home/ec2-user/mongo-backup.sh" >> /var/spool/cron/ec2-user'
+sudo sh -c 'echo "*/55 * * * * /home/ec2-user/mongo-backup.sh" >> /var/spool/cron/ec2-user'
