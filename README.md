@@ -1,3 +1,7 @@
+### Modeules refrenced and used from 
+1) https://github.com/terraform-aws-modules/terraform-aws-eks
+2) https://github.com/bootlabstech/terraform-aws-fully-loaded-eks-cluster
+3) https://github.com/KPRepos/terraform-ecs-app
 
 ### Primary Resources deployed by this code
 `VPC with 3 subnets(Public,Private and Intra), bastion, mongodb, secretsmanager for mongo secret, EKS, EKS-ALB addon, OIDC Provider for RBAC, S3 Bucket(Public) `
