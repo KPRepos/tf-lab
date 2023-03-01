@@ -1,10 +1,6 @@
-### Modeules refrenced and used from 
-1) https://github.com/terraform-aws-modules/terraform-aws-eks
-2) https://github.com/bootlabstech/terraform-aws-fully-loaded-eks-cluster
-3) https://github.com/KPRepos/terraform-ecs-app
 
 ### Primary Resources deployed by this code
-`VPC with 3 subnets(Public,Private and Intra), bastion, mongodb, secretsmanager for mongo secret, EKS, EKS-ALB addon, OIDC Provider for RBAC, S3 Bucket(Public) `
+`VPC with 3 subnets(Public,Private and Intra), bastion, mongodb, secretsmanager for mongo secret, EKS, EKS-ALB addon, OIDC Provider for RBAC, S3 Bucket(Public), Cluster Role for Pods `
  ` Modules and Git Repos are locally downloaded to avoid any git pinning and custom code changes`
  
 ### Process 
@@ -18,16 +14,18 @@ Infra:-
 
 ## EKS
 
-## Make sure you have eksctl and lubectl 
+### Make sure you have eksctl and kubectl 
 `curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 sudo mv /tmp/eksctl /usr/local/bin
 eksctl version`
+
+
 
 ## Testing
 1) Update kubeconfig
 `aws eks update-kubeconfig --region us-west-2 --name eks-lab`
 
-2) #Apply yaml config to deploy web app  - port 80
+2) Apply yaml config to deploy web app  - port 80
 ` update security group ID in annotation (tem workaround) with name alb_security_group_eks_custom from vpc security groups- alb.ingress.kubernetes.io/security-groups: sg-02c626328ebe4b8aa`
 `kubectl apply -f eks/2048_full.yaml`
 `kubectl get ingress/ingress-2048 -n game-2048`
@@ -35,7 +33,7 @@ eksctl version`
 #### https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
 
 
-3) privileged container deploymenet 
+3) privileged container deployment 
 
 `kubectl apply -f eks/shell-demo.yaml`
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
@@ -77,3 +75,14 @@ helm install my-release bitnami/jenkins
 sudo su - ec2-user 
 
 
+### Modules refrenced and used from 
+1) https://github.com/terraform-aws-modules/terraform-aws-eks
+2) https://github.com/bootlabstech/terraform-aws-fully-loaded-eks-cluster
+3) https://github.com/KPRepos/terraform-ecs-app
+
+
+## Userdata scripts
+
+1) templates/app_user_data.sh = This is mongodb userdata that creates an admin password retreived from secrets manager and creates a dummy collection of data such that backups can work.
+
+2) templates/bastion_user_data.sh = This is for bastion ec2, which will create a cron job to connect to mongodb and initaie backup, mongodb password info will be retrieved from secrets manager.
