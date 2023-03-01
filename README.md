@@ -20,13 +20,16 @@ sudo mv /tmp/eksctl /usr/local/bin
 eksctl version`
 
 ## Testing
-## https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
 1) Update kubeconfig
 `aws eks update-kubeconfig --region us-west-2 --name eks-lab`
 2) #Apply yaml config to deploy web app  - port 80
 ` update security group ID in annotation (tem workaround) with name alb_security_group_eks_custom from vpc security groups- alb.ingress.kubernetes.io/security-groups: sg-02c626328ebe4b8aa`
-kubectl apply -f eks/2048_full.yaml 
-kubectl get ingress/ingress-2048 -n game-2048
+`kubectl apply -f eks/2048_full.yaml`
+`kubectl get ingress/ingress-2048 -n game-2048`
+
+#### https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
+
+
 3) privileged container deploymenet 
 
 `kubectl apply -f eks/shell-demo.yaml`
