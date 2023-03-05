@@ -1,6 +1,6 @@
 #!/bin/sh -xe
-sudo cat >/etc/yum.repos.d/mongodb-org-5.0.repo <<EOL
-[mongodb-org-5.0]
+sudo cat >/etc/yum.repos.d/mongodb-org-${Mongodb_repo_version}.repo <<EOL
+[mongodb-org-${Mongodb_repo_version}]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/7/mongodb-org/5.0/x86_64/
 gpgcheck=1
@@ -8,7 +8,7 @@ enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-5.0.asc
 EOL
 sleep 15
-sudo yum install -y mongodb-org-5.0.10 mongodb-org-database-5.0.10 mongodb-org-server-5.0.10 mongodb-org-mongos-5.0.10 mongodb-org-tools-5.0.10
+sudo yum install -y mongodb-org-${Mongodb_install_version} mongodb-org-database-${Mongodb_install_version} mongodb-org-server-${Mongodb_install_version} mongodb-org-mongos-${Mongodb_install_version} mongodb-org-tools-${Mongodb_install_version}
 sleep 10
 sudo yum install -y jq
 sudo yum install -y git make checkpolicy policycoreutils selinux-policy-devel

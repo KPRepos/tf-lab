@@ -91,6 +91,14 @@ module "eks" {
       type                     = "ingress"
       source_security_group_id = aws_security_group.additional.id
     }
+    ingress_source_security_group_id = {
+      description              = "Ingress from another IP in private subnet"
+      protocol                 = "tcp"
+      from_port                = 443
+      to_port                  = 443
+      type                     = "ingress"
+      cidr_blocks      = ["10.0.0.0/16"]
+    }
   }
 
   # Extend node-to-node security group rules

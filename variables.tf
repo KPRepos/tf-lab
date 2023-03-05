@@ -17,4 +17,28 @@ variable "key_name" {
   description = "ec2 key"
 }
 
+variable "ami_id_mongo" {
+  type        = string
+  description = "ami_id"
+}
+
+variable "ami_id_bastion" {
+  type        = string
+  description = "ami_id"
+}
+
+ 
+
+variable "deploy_bastion" {
+  type        = string
+  description = "ec2 key"
+  default = "yes"
+}
+
+
+variable "mongo_bastion" {
+  type        = string
+  description = "ec2 key"
+  default = "yes"
+}
 

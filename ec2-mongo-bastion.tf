@@ -1,17 +1,20 @@
 data "template_file" "app_user_data" {
-  template = "${file("templates/app_user_data.sh")}"
+  template = "${file("templates/mongo_user_data.sh")}"
 
   vars = {
     backup_s3_bucket       = "${aws_s3_bucket.public_s3_lab_mongo.id}"
     aws_region = var.region
+    Mongodb_repo_version = ""
+    Mongodb_install_version = ""
     
   }
 }
 
 resource "aws_instance" "MongoDB" {
-  count                = 1
+  # count                = 0
+  count = var.deploy_bastion  == "yes" ? 1 : 0
   # ami                  = "ami-0f1a5f5ada0e7da53"
-  ami                  = "ami-0d2d5615528c7c1dc" # older than 1 year
+  ami                  = var.ami_id_mongo # older than 1 year
   instance_type        = "t3.small"
   key_name             = "kp-2023"
   user_data            = "${data.template_file.app_user_data.rendered}"
@@ -80,23 +83,28 @@ tags = {
 }
 
 data "template_file" "bastion_user_data" {
+  count = var.deploy_bastion  == "yes" ? 1 : 0
   template = "${file("templates/bastion_user_data.sh")}"
 
   vars = {
     backup_s3_bucket       = "${aws_s3_bucket.public_s3_lab_mongo.id}"
-    mongodb_dns = "${aws_instance.MongoDB[0].private_dns}"
+    # mongodb_dns = "${aws_instance.MongoDB.private_dns}"
+    mongodb_dns = "${aws_instance.MongoDB[count.index].private_dns}"
     aws_region = var.region
   }
 }
-
-
-
+  # count = "${length(data.aws_vpcs.foo.ids)}"
+  # vpc_id = "${tolist(data.aws_vpcs.foo.ids)[count.index]}"
+# "${tolist(data.aws_vpcs.foo.ids)[count.index]}"
+# ${aws_security_group.cluster.*.id}
+# toset([for db in lookup(var.db_replicas, local.aws_account) : lower(db)])
 resource "aws_instance" "bastion" {
-  count                = 1
-  ami                  = "ami-0f1a5f5ada0e7da53"
+  # count                = 0
+  count = var.deploy_bastion  == "yes" ? 1 : 0
+  ami                  = var.ami_id_bastion 
   instance_type        = "t3.micro"
   key_name             = var.key_name
-  user_data            = "${data.template_file.bastion_user_data.rendered}"
+  user_data            = "data.template_file.bastion_user_data[count.index]"
   iam_instance_profile = aws_iam_instance_profile.bastion-ec2-role.name
   vpc_security_group_ids =  [aws_security_group.bastion_security_group.id]
   subnet_id            = module.vpc.public_subnets[0]
@@ -113,13 +121,13 @@ resource "aws_instance" "bastion" {
   }
 }
 
- 
 resource "random_password" "password" {
   length           = 16
   special          = true
   override_special = "_%@"
 }
  
+
 #Creating a AWS secret 
  
 resource "aws_secretsmanager_secret" "mongoadminUserpassword" {
