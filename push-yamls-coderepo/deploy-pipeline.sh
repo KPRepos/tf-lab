@@ -14,7 +14,7 @@ git clone codecommit::$AWS_REGION://eksworkshop-app
 cd eksworkshop-app
 cp ../buildspec.yml .
 cp ../buildspec-delete.yml .
-cp ../../eks/* .
+cp ../../eks-sample-apps/* .
 cp ../
 cp ../*.tf .
 

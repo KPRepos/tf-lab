@@ -32,19 +32,19 @@ eksctl version`
 
 2) Apply yaml config to deploy web app  - port 80
 *  update security group ID in annotation (tem workaround) with name alb_security_group_eks_custom from vpc security groups- alb.ingress.kubernetes.io/security-groups: sg-02c626328ebe4b8aa
-*  `kubectl apply -f eks/2048_full.yaml`
+*  `kubectl apply -f eks-sample-apps/2048_full.yaml`
 * 
    `kubectl get ingress/ingress-2048 -n game-2048`
 
 ##### More info on alb addon installation in main.tf - https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
 
 3) Flask web app with mongodb 
- `kubectl apply -f eks/flask-web-app.yaml`
+ `kubectl apply -f eks-sample-apps/flask-web-app.yaml`
  `kubectl get ingress/ingress-flask-web-app -n flask-web-app`
  
 3) privileged container deployment 
 
-`kubectl apply -f eks/shell-demo.yaml`
+`kubectl apply -f eks-sample-apps/shell-demo.yaml`
 
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
 

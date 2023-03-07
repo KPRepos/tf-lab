@@ -88,7 +88,6 @@ phases:
       - export ACCOUNT_ID=$(echo $acc)
       - export TF_VAR_region=${AWS_REGION}
       - echo $CODEBUILD_SRC_DIR
-
       - echo "yum installs"
       - "yum -y -q -e 0 install moreutils bash-completion nmap bind-utils"
       # - echo "Terraform"
@@ -96,7 +95,6 @@ phases:
       # - unzip -qq terraform_1.2.4_linux_amd64.zip
       # - mv terraform /usr/local/bin/
       # - rm -f terraform_1.2.4_linux_amd64.zip
-
       - echo "kubectl"
       - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
       - chmod +x ./kubectl
