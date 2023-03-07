@@ -123,7 +123,7 @@ The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have
 4) https://chat.openai.com/chat
 5) https://towardsdatascience.com/how-to-deploy-a-flask-api-in-kubernetes-and-connect-it-with-other-micro-services-af16965b67fe
 6) https://tf-eks-workshop.workshop.aws/500_eks-terraform-workshop.html
-7) 
+7) https://hackmd.io/@pmanzoni/r1uWcTqfU
 
 
 ## Userdata scripts
