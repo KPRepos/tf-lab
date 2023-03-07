@@ -22,6 +22,9 @@ sudo mv /tmp/eksctl /usr/local/bin
 eksctl version`
 
 
+## Push Code to ECR or update ECR image for flask-web-app
+
+
 
 ## Testing
 1) Update kubeconfig
@@ -29,16 +32,19 @@ eksctl version`
 
 2) Apply yaml config to deploy web app  - port 80
 *  update security group ID in annotation (tem workaround) with name alb_security_group_eks_custom from vpc security groups- alb.ingress.kubernetes.io/security-groups: sg-02c626328ebe4b8aa
-*  `kubectl apply -f eks/2048_full.yaml`
+*  `kubectl apply -f eks-sample-apps/2048_full.yaml`
 * 
    `kubectl get ingress/ingress-2048 -n game-2048`
 
 ##### More info on alb addon installation in main.tf - https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
 
-
+3) Flask web app with mongodb 
+ `kubectl apply -f eks-sample-apps/flask-web-app.yaml`
+ `kubectl get ingress/ingress-flask-web-app -n flask-web-app`
+ 
 3) privileged container deployment 
 
-`kubectl apply -f eks/shell-demo.yaml`
+`kubectl apply -f eks-sample-apps/shell-demo.yaml`
 
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
 
@@ -82,8 +88,23 @@ helm install my-release bitnami/jenkins
 
 ### Login to bastion using ssm 
 
-`aws ssm start-session --target i-04103fb0104ed83e7 --region us-west-2`
-sudo su - ec2-user 
+`aws ssm start-session --region us-west-2 --target i-00xxxxx`
+`sudo su - ec2-user`
+`curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"`
+`sudo rpm -ivh sess*`
+
+
+### Advanced Addons 
+
+#### CICD (Autneticate with ECR and Kubectl)
+
+
+1) Navigate to cicd and validate variables
+`terraform init && terraform apply`
+
+2) Push-yaml to push-yaml-coderepo from root  to trigger pipelines
+
+ Run `sh deploy-pipeline.sh`
 
 
 ### Modules refrenced and used from 

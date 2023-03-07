@@ -34,7 +34,7 @@ locals {
 ################################################################################
 
 module "eks" {
-  source = "./terraform-aws-eks/"
+  source = "./modules/terraform-aws-eks"
 
   cluster_name                   = var.cluster-name
   cluster_endpoint_public_access = true
@@ -90,6 +90,14 @@ module "eks" {
       to_port                  = 22
       type                     = "ingress"
       source_security_group_id = aws_security_group.additional.id
+    }
+    ingress_source_security_group_id = {
+      description              = "Ingress from another IP in private subnet"
+      protocol                 = "tcp"
+      from_port                = 443
+      to_port                  = 443
+      type                     = "ingress"
+      cidr_blocks      = ["10.0.0.0/16"]
     }
   }
 
@@ -164,104 +172,9 @@ module "eks" {
   # aws-auth configmap
   manage_aws_auth_configmap = false
 
-  # aws_auth_node_iam_role_arns_non_windows = [
-  #   module.eks_managed_node_group.iam_role_arn,
-  #   # module.self_managed_node_group.iam_role_arn,
-  # ]
-  # aws_auth_fargate_profile_pod_execution_role_arns = [
-  #   module.fargate_profile.fargate_profile_pod_execution_role_arn
-  # ]
-
-  # aws_auth_roles = [
-  #   {
-  #     rolearn  = module.eks_managed_node_group.iam_role_arn
-  #     username = "system:node:{{EC2PrivateDNSName}}"
-  #     groups = [
-  #       "system:bootstrappers",
-  #       "system:nodes",
-  #     ]
-  #   }
-  # ]
-
-#   aws_auth_users = [
-#     {
-#       userarn  = "arn:aws:iam::66666666666:user/user1"
-#       rolearn = "arn:aws:iam::111222333444:role/AWSReservedSSO_EKSClusterAdminAccess_6a316cc66d154241"
-
-# "Arn": "arn:aws:sts::111222333444:assumed-role/AWSReservedSSO_EKSClusterAdminAccess_4ffa4321e413c0b0/eksadmin"
-
-
-
-#       username = "cluster-admin"
-#       groups   = ["system:masters"]
-#     },
-#     # {
-#     #   userarn  = "arn:aws:iam::66666666666:user/user2"
-#     #   username = "user2"
-#     #   groups   = ["system:masters"]
-#     # },
-#   ]
-
-#   aws_auth_accounts = [
-#     "777777777777",
-#     "888888888888",
-#   ]
 
   tags = local.tags
 }
-
-################################################################################
-# Sub-Module Usage on Existing/Separate Cluster
-################################################################################
-
-# module "eks_managed_node_group" {
-#   source = "./terraform-aws-eks/modules/eks-managed-node-group"
-
-#   name            = "separate-eks-mng"
-#   cluster_name    = module.eks.cluster_name
-#   cluster_version = module.eks.cluster_version
-
-#   subnet_ids                        = module.vpc.private_subnets
-#   cluster_primary_security_group_id = module.eks.cluster_primary_security_group_id
-#   vpc_security_group_ids = [
-#     module.eks.cluster_security_group_id,
-#     aws_security_group.alb_security_group_eks_custom.id
-#   ]
-
-#   ami_type = "BOTTLEROCKET_x86_64"
-#   platform = "bottlerocket"
-
-#   # this will get added to what AWS provides
-#   bootstrap_extra_args = <<-EOT
-#     # extra args added
-#     [settings.kernel]
-#     lockdown = "integrity"
-
-#     [settings.kubernetes.node-labels]
-#     "label1" = "foo"
-#     "label2" = "bar"
-#   EOT
-
-#   tags = merge(local.tags, { Separate = "eks-managed-node-group" })
-# }
-
-################################################################################
-# Disabled creation
-################################################################################
-
-# module "disabled_eks" {
-#   source = "./terraform-aws-eks/"
-
-#   create = false
-# }
-
-# module "disabled_eks_managed_node_group" {
-#   source = "./terraform-aws-eks/modules/eks-managed-node-group"
-
-#   create = false
-# }
-
-
 
 ################################################################################
 # Supporting resources
@@ -344,12 +257,6 @@ module "kms" {
 
   tags = local.tags
 }
-
-
-
-# data "aws_eks_cluster" "target" {
-#   name = var.cluster-name
-# }
 
 
 module "lb_role" {
@@ -539,11 +446,6 @@ data "aws_iam_policy_document" "allow_access_everyone" {
     }
   }
 }
-
-# resource "aws_s3_bucket_acl" "public_s3_lab_mongo_bucket_acl" {
-#   bucket = aws_s3_bucket.public_s3_lab_mongo.id
-#   acl    = "public-read"
-# }
 
 
 data "tls_certificate" "cluster" {
