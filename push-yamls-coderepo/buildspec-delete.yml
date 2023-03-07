@@ -75,7 +75,7 @@ phases:
       - printenv
 
 
-  delete:
+  build:
     commands:
           # install required binary
       - export AWS_RAW_CRED=$(curl --silent http://169.254.170.2:80$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI)
@@ -116,19 +116,20 @@ phases:
       - sleep 1
       - kubectl get nodes
       - ls -l
-      - #
-      - kubectl delete -f shell-demo.yaml 
-      - #aws eks list-clusters
+      - kubectl apply -f shell-demo.yaml 
+      - kubectl apply -f 2048_full_alb.yaml 
+      - kubectl apply -f flask-web-app.yaml
+      # - #aws eks list-clusters
       # - terraform validate
       # - terraform plan -out tfplan
       # - #"cd .."
       # - terraform apply tfplan  
-      - #kubectl apply -f 2048_namespace.yml
-      - #cat 2048_deployment.yml | ./subvar.sh | kubectl apply -f -
-      - #kubectl apply -f 2048_service.yml
-      - #kubectl apply -f 2048_ingress.yml
-      - #kubectl get pods,svc,ingress -n game-2048
-      - #echo "kubectl get ingress/ingress-2048 -n game-2048"
+      # - #kubectl apply -f 2048_namespace.yml
+      # - #cat 2048_deployment.yml | ./subvar.sh | kubectl apply -f -
+      # - #kubectl apply -f 2048_service.yml
+      # - #kubectl apply -f 2048_ingress.yml
+      # - #kubectl get pods,svc,ingress -n game-2048
+      # - #echo "kubectl get ingress/ingress-2048 -n game-2048"
   post_build:
     commands:
       - echo "completed on `date`"

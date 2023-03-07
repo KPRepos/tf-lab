@@ -22,6 +22,9 @@ sudo mv /tmp/eksctl /usr/local/bin
 eksctl version`
 
 
+## Push Code to ECR or update ECR image for flask-web-app
+
+
 
 ## Testing
 1) Update kubeconfig
@@ -35,7 +38,10 @@ eksctl version`
 
 ##### More info on alb addon installation in main.tf - https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
 
-
+3) Flask web app with mongodb 
+ `kubectl apply -f eks/flask-web-app.yaml`
+ `kubectl get ingress/ingress-flask-web-app -n flask-web-app`
+ 
 3) privileged container deployment 
 
 `kubectl apply -f eks/shell-demo.yaml`
@@ -86,6 +92,19 @@ helm install my-release bitnami/jenkins
 `sudo su - ec2-user`
 `curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"`
 `sudo rpm -ivh sess*`
+
+
+### Advanced Addons 
+
+#### CICD (Autneticate with ECR and Kubectl)
+
+
+1) Navigate to cicd and validate variables
+`terraform init && terraform apply`
+
+2) Push-yaml to push-yaml-coderepo from root  to trigger pipelines
+
+ Run `sh deploy-pipeline.sh`
 
 
 ### Modules refrenced and used from 
