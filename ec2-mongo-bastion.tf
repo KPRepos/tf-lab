@@ -16,7 +16,7 @@ resource "aws_instance" "MongoDB" {
   # ami                  = "ami-0f1a5f5ada0e7da53"
   ami                  = var.ami_id_mongo # older than 1 year
   instance_type        = "t3.small"
-  key_name             = "kp-2023"
+  # key_name             = "kp-2023"
   user_data            = "${data.template_file.mongo_user_data.rendered}"
   iam_instance_profile = aws_iam_instance_profile.mongo-ec2-role.name
   vpc_security_group_ids = [aws_security_group.mongodb_security_group.id]
@@ -107,11 +107,11 @@ resource "aws_instance" "bastion" {
   count = var.deploy_bastion  == "yes" ? 1 : 0
   ami                  = var.ami_id_bastion 
   instance_type        = "t3.micro"
-  key_name             = var.key_name
+  # key_name             = var.key_name
   user_data            = "${data.template_file.bastion_user_data.rendered}"
   iam_instance_profile = aws_iam_instance_profile.bastion-ec2-role.name
   vpc_security_group_ids =  [aws_security_group.bastion_security_group.id]
-  subnet_id            = module.vpc.public_subnets[0]
+  subnet_id            = module.vpc.private_subnets[0]
   associate_public_ip_address = true
   user_data_replace_on_change = true
 

@@ -14,9 +14,17 @@ Infra:-
    
     `Terraform apply`
 
+### Access Public bucket 
+
+`https://{bucketname}.s3.us-west-2.amazonaws.com/`
+
+### Terminate ec2 example from Ongo Instance (Mongo Instance have ec2*, but bastion has no elevated access)
+
+`aws ec2 terminate-instances --region us-west-2 --instance-ids i-xxx `
+
 ## EKS
 
-### Make sure you have eksctl and kubectl 
+### Make sure you have  aws-session-manager(for loging to servers, alternatively can also use key if enabled in variables and in tf ec2-*.tf code), eksctl and kubectl 
 `curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 sudo mv /tmp/eksctl /usr/local/bin
 eksctl version`
