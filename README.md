@@ -24,9 +24,21 @@ eksctl version`
 
 ## Push Code to ECR or update ECR image for flask-web-app
 
+### CICD -Pipeline can be run at this point to deploy sample web apps 
+
+#### CICD (Autneticate with ECR and Kubectl)
 
 
-## Testing
+1) Navigate to cicd and validate variables
+`terraform init && terraform apply`
+
+2) Push-yaml to push-yaml-coderepo from root  to trigger pipelines
+
+ Run `sh deploy-pipeline.sh`
+
+
+
+## Deploying  EKS Apps Manually and Testing 
 ### Notes:- Sg info copied has to eks yaml file due to some bug with annotation/versions
 
 1) Update kubeconfig
@@ -50,17 +62,8 @@ eksctl version`
 
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
 
-The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have s3:GetBucket", "s3:GetObject", "s3:PutObject access on * 
-### Example test - 
-`apt-get update`
-
-`apt-get install -y awscli`
-
-`touch test-rbac`
-
-`aws s3api put-object --bucket test44242 --key test-rbac --body ./test-rbac`
 ####  *lab-eks-pod-cluster-admin service account was mapped toa custom cluster-admin role with admin privilages 
-### Test 
+### Test cluster-admin custom role access for a pod which was provided via RBAC
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
 
 `apt-get update`
@@ -71,12 +74,24 @@ The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have
 
 `install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl`
 
+`kubectl get pods -A`
+
+The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have s3:GetBucket", "s3:GetObject", "s3:PutObject access on * 
+#### Test AWS IAM Access for pods with write access to s3
+`apt-get update`
+
+`apt-get install -y awscli`
+
+`touch test-rbac`
+
+`aws s3api put-object --bucket test44242 --key test-rbac --body ./test-rbac`
+
 
 ###  Future Improvements
-1) Currently Code is not configured with CI/CD, but can be easily ported to Cloud*
-2) ec2-key need to be created manually. Though it's is not mandatory and can use sesion manager to login to bastion 
-3) container to mongodb connection, which is optonal was not configured. Priority given to IAC, basic security that was not defined per lab excercise. This can be connected based on app
-4) Tags can be appended to IAM and S3 to support multi env deploymenet within same AWS Account
+1) ec2-key need to be created manually. We don't actaully need any key nor a public subnet for bastion,  use sesion manager to login to bastion 
+2) Tags can be appended to IAM and S3 to support multi env deploymenet within same AWS Account
+3) SG to SG mapping in SG rules
+4) AWS Secrets manager addon for kubernetes 
 
 
 ### Troubleshooting commands
@@ -91,19 +106,6 @@ The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have
 `sudo su - ec2-user`
 `curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"`
 `sudo rpm -ivh sess*`
-
-
-### Advanced Addons 
-
-#### CICD (Autneticate with ECR and Kubectl)
-
-
-1) Navigate to cicd and validate variables
-`terraform init && terraform apply`
-
-2) Push-yaml to push-yaml-coderepo from root  to trigger pipelines
-
- Run `sh deploy-pipeline.sh`
 
 
 ### Some of Modules refrenced and blogs referred from 
