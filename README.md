@@ -1,6 +1,14 @@
 
 ### Primary Resources deployed by this code
-* VPC with 3 subnets(Public,Private and Intra), bastion, mongodb, secretsmanager for mongo secret, EKS, EKS-ALB addon, OIDC Provider for RBAC, S3 Bucket(Public), Cluster Role for Pods
+* VPC with 3 subnets, bastion, mongodb, secretsmanager for mongo secret, EKS, EKS-ALB addon, OIDC Provider for RBAC, S3 Bucket(Public), Cluster Role for Pods
+* Public for ALB's
+* Private for most of AWS Resources 
+* Intra for EKS COntrol Panel 
+
+### Architecture Diagram 
+
+![Test](tf-lab.jpg "Test")
+![image info](tf-lab.png)
 
 * Modules and Git Repos are locally downloaded to avoid any git pinning and custom code changes
  
