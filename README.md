@@ -110,9 +110,12 @@ The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have
 
 ### Some of Modules refrenced and blogs referred from 
 1) https://github.com/terraform-aws-modules/terraform-aws-eks
-2) https://github.com/bootlabstech/terraform-aws-fully-loaded-eks-cluster
-3) https://github.com/KPRepos/terraform-ecs-app
-4) https://towardsdatascience.com/how-to-deploy-a-flask-api-in-kubernetes-and-connect-it-with-other-micro-services-af16965b67fe
+2) https://github.com/KPRepos/terraform-ecs-app
+3) https://towardsdatascience.com/how-to-deploy-a-flask-api-in-kubernetes-and-connect-it-with-other-micro-services-af16965b67fe
+4) https://chat.openai.com/chat
+5) https://towardsdatascience.com/how-to-deploy-a-flask-api-in-kubernetes-and-connect-it-with-other-micro-services-af16965b67fe
+6) https://tf-eks-workshop.workshop.aws/500_eks-terraform-workshop.html
+7) 
 
 
 ## Userdata scripts
