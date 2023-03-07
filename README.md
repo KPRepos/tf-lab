@@ -27,6 +27,8 @@ eksctl version`
 
 
 ## Testing
+### Notes:- Sg info copied has to eks yaml file due to some bug with annotation/versions
+
 1) Update kubeconfig
 `aws eks update-kubeconfig --region us-west-2 --name eks-lab`
 
@@ -70,9 +72,6 @@ The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have
 `install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl`
 
 
-3) helm repo add bitnami https://charts.bitnami.com/bitnami
-helm install my-release bitnami/jenkins
-
 ###  Future Improvements
 1) Currently Code is not configured with CI/CD, but can be easily ported to Cloud*
 2) ec2-key need to be created manually. Though it's is not mandatory and can use sesion manager to login to bastion 
@@ -107,10 +106,11 @@ helm install my-release bitnami/jenkins
  Run `sh deploy-pipeline.sh`
 
 
-### Modules refrenced and used from 
+### Some of Modules refrenced and blogs referred from 
 1) https://github.com/terraform-aws-modules/terraform-aws-eks
 2) https://github.com/bootlabstech/terraform-aws-fully-loaded-eks-cluster
 3) https://github.com/KPRepos/terraform-ecs-app
+4) https://towardsdatascience.com/how-to-deploy-a-flask-api-in-kubernetes-and-connect-it-with-other-micro-services-af16965b67fe
 
 
 ## Userdata scripts

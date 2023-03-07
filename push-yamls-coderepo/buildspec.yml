@@ -117,9 +117,9 @@ phases:
       - kubectl get nodes
       - ls -l
       - sleep 4
+      - kubectl apply -f flask-web-app.yaml
       - kubectl apply -f shell-demo.yaml 
       - kubectl apply -f 2048_full_alb.yaml 
-      - kubectl apply -f flask-web-app.yaml
       # - #aws eks list-clusters
       # - terraform validate
       # - terraform plan -out tfplan
