@@ -19,6 +19,19 @@ spec:
         ports:
           - containerPort: 80
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-flask
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: flask
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -26,6 +39,7 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/security-groups: sg-029a3f0a7d15bc9d4
 spec:
   ingressClassName: alb
   rules:
@@ -38,3 +52,4 @@ spec:
               name: service-flask
               port:
                 number: 80
+  

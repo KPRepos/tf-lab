@@ -34,6 +34,11 @@ resource "aws_iam_role_policy" "bastion_iam_role_policy" {
     },
     {
       "Effect": "Allow",
+      "Action": ["ssm:StartSession", "ssm:TerminateSession"],
+      "Resource":"*"
+    },
+    {
+      "Effect": "Allow",
       "Action": [
         "s3:PutObject",
         "s3:GetObject",

@@ -2,55 +2,55 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: game-2048
+  name: flask-web-app
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: game-2048
-  name: deployment-2048
+  namespace: flask-web-app
+  name: flask-web-app-deployment
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: app-2048
+      app.kubernetes.io/name: flask-web-app
   replicas: 2
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: app-2048
+        app.kubernetes.io/name: flask-web-app
     spec:
       containers:
-      - image: public.ecr.aws/l6m2t8p7/docker-2048:latest
+      - name: flask-web-app
+        image: 476895560875.dkr.ecr.us-west-2.amazonaws.com/flask-web-app:latest
         imagePullPolicy: Always
-        name: app-2048
         ports:
-        - containerPort: 80
+        - containerPort: 5555
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: game-2048
-  name: service-2048
+  # labels:
+  #   app.kubernetes.io/name: flask-web-app
+  namespace: flask-web-app
+  name: service-flask-web-app
 spec:
   ports:
-    - port: 80
-      targetPort: 80
-      protocol: TCP
+    - nodePort: 31479
+      port: 80
+      targetPort: 5555
   type: NodePort
   selector:
-    app.kubernetes.io/name: app-2048
+    app.kubernetes.io/name: flask-web-app
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: game-2048
-  name: ingress-2048
+  namespace: flask-web-app
+  name: ingress-flask-web-app
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/security-groups: sg-029a3f0a7d15bc9d4
-    # alb.ingress.kubernetes.io/manage-backend-security-group-rules: "true"
-    
 spec:
   ingressClassName: alb
   rules:
@@ -60,6 +60,6 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: service-2048
+              name: service-flask-web-app
               port:
                 number: 80

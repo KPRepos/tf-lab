@@ -9,7 +9,7 @@ gpgkey=https://www.mongodb.org/static/pgp/server-5.0.asc
 EOL
 sleep 15
 sudo yum install -y jq
-sudo yum install -y mongocli
+sudo yum install -y mongocli python-pip
 sudo amazon-linux-extras install epel -y
 sudo yum install -y s3cmd
 wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-amazon2-x86_64-100.6.1.rpm
@@ -31,3 +31,6 @@ rm -rf mongodb-*
 EOL
 sudo chmod +x /home/ec2-user/mongo-backup.sh 
 sudo sh -c 'echo "*/55 * * * * /home/ec2-user/mongo-backup.sh" >> /var/spool/cron/ec2-user'
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+sudo rpm -ivh sess*
+sudo rm sess*

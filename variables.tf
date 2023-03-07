@@ -31,14 +31,23 @@ variable "ami_id_bastion" {
 
 variable "deploy_bastion" {
   type        = string
-  description = "ec2 key"
+  description = "deploy instance"
   default = "yes"
 }
 
 
-variable "mongo_bastion" {
+variable "deploy_mongo" {
   type        = string
-  description = "ec2 key"
+  description = "deploy instance"
   default = "yes"
 }
 
+variable "Mongodb_install_version" {
+  type        = string
+  description = "version"
+}
+
+variable "Mongodb_repo_version" {
+  type        = string
+  description = "version"
+}

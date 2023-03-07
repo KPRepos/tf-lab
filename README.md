@@ -82,8 +82,10 @@ helm install my-release bitnami/jenkins
 
 ### Login to bastion using ssm 
 
-`aws ssm start-session --target i-04103fb0104ed83e7 --region us-west-2`
-sudo su - ec2-user 
+`aws ssm start-session --region us-west-2 --target i-00xxxxx`
+`sudo su - ec2-user`
+`curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"`
+`sudo rpm -ivh sess*`
 
 
 ### Modules refrenced and used from 

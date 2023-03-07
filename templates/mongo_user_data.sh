@@ -16,7 +16,7 @@ git clone https://github.com/mongodb/mongodb-selinux
 cd mongodb-selinux
 make
 sudo make install
-sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
+sudo sed -i 's/127.0.0.1/::,0.0.0.0/g' /etc/mongod.conf
 sudo systemctl start mongod
 sleep 4
 systemctl is-active --quiet mongod && echo Service is running
@@ -47,4 +47,5 @@ cd mongodb-sample-dataset/
 rm -rf sample_airbnb/ sample_geospatial/ sample_supplies/  sample_analytics/ sample_mflix/ sample_training/
 mongodbpass=$(aws secretsmanager get-secret-value  --secret-id mongoadminUserpassword --region ${aws_region} | jq --raw-output .SecretString | jq -r ."password")
 ./script.sh localhost 27017 adminUser $mongodbpass
+
 

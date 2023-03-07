@@ -1,8 +1,8 @@
 key_name = "kp-2023"
 region = "us-west-2"
 cluster-name = "eks-lab"
-deploy_bastion = "no"
-deploy_mongo = "no"
+deploy_bastion = "yes"
+deploy_mongo = "yes"
 ami_id_bastion = "ami-0f1a5f5ada0e7da53" # Latest AMI
 ami_id_mongo = "ami-0d2d5615528c7c1dc" # Year old AMI -AMazon Base2 Linux
 Mongodb_repo_version = "5.0" # older than one year
