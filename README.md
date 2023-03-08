@@ -45,15 +45,15 @@ Infra:-
 
 `aws ec2 terminate-instances --region us-west-2 --instance-ids i-xxx `
 
-## EKS
+### EKS
 
-### Make sure you have  aws-session-manager(for logging to ec2's, alternatively you can also use key-pair if enabled in variables and in tf ec2-*.tf code), eksctl and kubectl arte also required. 
+#### Make sure you have  aws-session-manager(for logging to ec2's, alternatively you can also use key-pair if enabled in variables and in tf ec2-*.tf code), eksctl and kubectl arte also required. 
 
-## Push any updated Flask-web-app code to ECR or update ECR image.
+#### Push any updated Flask-web-app code to ECR or update ECR image.
 
 
-## Deploying EKS apps manually and testing 
-### Notes:- Sg info copied has to eks yaml file due to some bug with annotation/versions
+#### Deploying EKS apps manually and testing 
+#### Notes:- Sg info copied has to eks yaml file due to some bug with annotation/versions
 
 1) Update kubeconfig
 `aws eks update-kubeconfig --region us-west-2 --name eks-lab`
