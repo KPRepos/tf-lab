@@ -1,4 +1,7 @@
 
+ ⚠️WARNING⚠️ This is to test a Vulnerable deployment, Use caution when using this code as referance ⚠️WARNING⚠️
+
+
 ### Primary Resources deployed by this code
 * VPC with 3 subnets, bastion, mongodb, secretsmanager for mongo secret, EKS, EKS-ALB addon, OIDC Provider for RBAC, S3 Bucket(Public), Cluster Role for Pods
 * Public for ALB's
@@ -20,27 +23,9 @@ Infra:-
    
     `Terraform apply`
 
-### Access Public bucket 
+### CICD - Pipeline can be run at this point to deploy sample web apps 
 
-`https://{bucketname}.s3.us-west-2.amazonaws.com/`
-
-### Terminate ec2 example from Ongo Instance (Mongo Instance have ec2*, but bastion has no elevated access)
-
-`aws ec2 terminate-instances --region us-west-2 --instance-ids i-xxx `
-
-## EKS
-
-### Make sure you have  aws-session-manager(for loging to servers, alternatively can also use key if enabled in variables and in tf ec2-*.tf code), eksctl and kubectl 
-`curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-sudo mv /tmp/eksctl /usr/local/bin
-eksctl version`
-
-
-## Push Code to ECR or update ECR image for flask-web-app
-
-### CICD -Pipeline can be run at this point to deploy sample web apps 
-
-#### CICD (Autneticate with ECR and Kubectl)
+#### CICD (Authenticate with ECR and Kubectl)
 
 
 1) Navigate to cicd and validate variables
@@ -50,24 +35,41 @@ eksctl version`
 
  Run `sh deploy-pipeline.sh`
 
+#### Now start Pipeline `Deploy-apps-eks` to deploy apps to EKS
+
+### Access Public bucket (Get this from terraform or from AWS console in s3 service)
+
+`https://{bucketname}.s3.us-west-2.amazonaws.com/`
+
+### To terminate ec2 example from MongoDB Instance (Mongo Instance have ec2*, but bastion has no elevated access)
+
+`aws ec2 terminate-instances --region us-west-2 --instance-ids i-xxx `
+
+## EKS
+
+### Make sure you have  aws-session-manager(for logging to ec2's, alternatively you can also use key-pair if enabled in variables and in tf ec2-*.tf code), eksctl and kubectl arte also required. 
+
+## Push any updated Flask-web-app code to ECR or update ECR image.
 
 
-## Deploying  EKS Apps Manually and Testing 
+## Deploying EKS apps manually and testing 
 ### Notes:- Sg info copied has to eks yaml file due to some bug with annotation/versions
 
 1) Update kubeconfig
 `aws eks update-kubeconfig --region us-west-2 --name eks-lab`
 
 2) Apply yaml config to deploy web app  - port 80
-*  update security group ID in annotation (tem workaround) with name alb_security_group_eks_custom from vpc security groups- alb.ingress.kubernetes.io/security-groups: sg-02c626328ebe4b8aa
+*  update security group ID in annotation (tem workaround) with name alb_security_group_eks_custom from vpc security groups- alb.ingress.kubernetes.io/security-groups: sg-02c62xxxxxx
+
 *  `kubectl apply -f eks-sample-apps/2048_full.yaml`
-* 
-   `kubectl get ingress/ingress-2048 -n game-2048`
+*  `kubectl get ingress/ingress-2048 -n game-2048`
 
 ##### More info on alb addon installation in main.tf - https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
 
-3) Flask web app with mongodb 
+3) Flask web app with MngoDB
+
  `kubectl apply -f eks-sample-apps/flask-web-app.yaml`
+ 
  `kubectl get ingress/ingress-flask-web-app -n flask-web-app`
  
 3) privileged container deployment 
@@ -76,8 +78,9 @@ eksctl version`
 
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
 
-####  *lab-eks-pod-cluster-admin service account was mapped toa custom cluster-admin role with admin privilages 
-### Test cluster-admin custom role access for a pod which was provided via RBAC
+####  * Lab-eks-pod-cluster-admin service account was mapped to a custom cluster-admin role with admin privilages 
+####  * Test cluster-admin custom role access for a pod which was provided via RBAC
+
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
 
 `apt-get update`
@@ -90,8 +93,11 @@ eksctl version`
 
 `kubectl get pods -A`
 
-The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have s3:GetBucket", "s3:GetObject", "s3:PutObject access on * 
-#### Test AWS IAM Access for pods with write access to s3
+
+#### * Test AWS IAM Access for pods with write access to s3
+#### * The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have s3:GetBucket", "s3:GetObject", "s3:PutObject access on * 
+
+
 `apt-get update`
 
 `apt-get install -y awscli`
@@ -102,10 +108,11 @@ The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have
 
 
 ###  Future Improvements
-1) ec2-key need to be created manually. We don't actaully need any key nor a public subnet for bastion,  use sesion manager to login to bastion 
+1) ec2-key need to be created manually. We don't actaully need any key nor a public subnet for bastion,  use session manager to login to bastion 
 2) Tags can be appended to IAM and S3 to support multi env deploymenet within same AWS Account
-3) SG to SG mapping in SG rules
+3) More cleanup within Security Groups
 4) AWS Secrets manager addon for kubernetes 
+5) Cleanup of Readonly Public S3 Bucket, MongoDB IAM permissions, RBAC-Cluster Admin
 
 
 ### Troubleshooting commands
