@@ -6,7 +6,7 @@
 * Intra for EKS COntrol Panel 
 
 ### Architecture Diagram 
-![](tf-lab.png)
+![](tf-lab.jpg)
 
 * Modules and Git Repos are locally downloaded to avoid any git pinning and custom code changes
  
