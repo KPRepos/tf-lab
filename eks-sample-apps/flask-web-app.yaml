@@ -32,7 +32,7 @@ spec:
                 name: flaskapi-secrets
                 key: mongodb_password
           - name: db_host
-            value: 10.0.15.42
+            value: 10.0.8.248
 ---
 apiVersion: v1
 kind: Service

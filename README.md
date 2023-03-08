@@ -34,7 +34,8 @@ Infra:-
 2) Push-yaml to push-yaml-coderepo from root  to trigger pipelines
 
  Run `sh deploy-pipeline.sh`
-
+ 
+#### Make sure to update mongodb passowrd as base64 in eks-sample-apps/secrets.yaml
 #### Now start Pipeline `Deploy-apps-eks` to deploy apps to EKS
 
 ### Access Public bucket (Get this from terraform or from AWS console in s3 service)

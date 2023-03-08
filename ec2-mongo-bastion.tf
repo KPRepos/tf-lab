@@ -93,15 +93,7 @@ data "template_file" "bastion_user_data" {
     aws_region = var.region
   }
 }
-  # count = "${length(data.aws_vpcs.foo.ids)}"
-  # delete_source_from_s3 = var.env == "production" ? false : true
-#   mongodb_dns = "${aws_instance.MongoDB.private_dns}"
-#   =var,deploy_mongo =="yes" ? "${aws_instance.MongoDB.private_dns}" : "null"
-# "${aws_instance.MongoDB.private_dns}" 
-  # vpc_id = "${tolist(data.aws_vpcs.foo.ids)[count.index]}"
-# "${tolist(data.aws_vpcs.foo.ids)[count.index]}"
-# ${aws_security_group.cluster.*.id}
-# toset([for db in lookup(var.db_replicas, local.aws_account) : lower(db)])
+
 resource "aws_instance" "bastion" {
   # count                = 0
   count = var.deploy_bastion  == "yes" ? 1 : 0
@@ -112,7 +104,7 @@ resource "aws_instance" "bastion" {
   iam_instance_profile = aws_iam_instance_profile.bastion-ec2-role.name
   vpc_security_group_ids =  [aws_security_group.bastion_security_group.id]
   subnet_id            = module.vpc.private_subnets[0]
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   user_data_replace_on_change = true
 
   root_block_device {
