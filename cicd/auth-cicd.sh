@@ -1,3 +1,4 @@
+export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
 test -n "$ACCOUNT_ID" && echo ACCOUNT_ID is "$ACCOUNT_ID" || "echo ACCOUNT_ID is not set && exit"
 ROLE="    - rolearn: arn:aws:iam::$ACCOUNT_ID:role/codebuild-eks-cicd-build-app-service-role\n      username: build\n      groups:\n        - system:masters"
 #

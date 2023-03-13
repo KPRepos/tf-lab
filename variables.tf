@@ -11,11 +11,17 @@ variable "region" {
   description = "The AWS Region to deploy EKS"
 }
 
-
-variable "key_name" {
+variable "env_name" {
+  # default     = "us-west-2"
   type        = string
-  description = "ec2 key"
+  description = "The environment key to append to resources"
 }
+
+#Not required, as session manager is in use 
+# variable "key_name" {
+#   type        = string
+#   description = "ec2 key"
+# }
 
 variable "ami_id_mongo" {
   type        = string

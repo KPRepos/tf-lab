@@ -18,7 +18,7 @@
 Infra:- 
 
 1) Create a bucket for terraform tfstate and updte it in provider-backend.tf (can be automated)
-2) validate lab-variables.auto.tfvars with required inputs
+2) validate lab-variables.auto.tfvars with required inputs 
 3) ` Terraform init`
    
     `Terraform apply`
@@ -31,43 +31,59 @@ Infra:-
 1) Navigate to cicd and validate variables
 `terraform init && terraform apply`
 
-2) Push-yaml to push-yaml-coderepo from root  to trigger pipelines
 
- Run `sh deploy-pipeline.sh`
- 
-#### Make sure to update mongodb passowrd as base64 in eks-sample-apps/secrets.yaml
-#### Now start Pipeline `Deploy-apps-eks` to deploy apps to EKS
-
-### Access Public bucket (Get this from terraform or from AWS console in s3 service)
+### Access Public S3 bucket (Get this from AWS console in s3 service, name starts with "public-s3-lab-mongo-*")
 
 `https://{bucketname}.s3.us-west-2.amazonaws.com/`
 
 ### To terminate ec2 example from MongoDB Instance (Mongo Instance have ec2*, but bastion has no elevated access)
+#### Make sure you have  aws-session-manager(for logging to ec2's, alternatively you can also use key-pair if enabled in variables and in tf ec2-*.tf code), eksctl and kubectl arte also required. 
+`curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"`
+`sudo rpm -ivh sess*`
+### Login to MongoDb using ssm 
 
-`aws ec2 terminate-instances --region us-west-2 --instance-ids i-xxx `
+`aws ssm start-session --region us-west-2 --target i-00xxxxx`
+`sudo su - ec2-user`
+
+Deploy a test ec2 and use `aws ec2 terminate-instances --region us-west-2 --instance-ids i-xxx` to terminate it 
+ 
+### Login to bastion 
+`aws ssm start-session --region us-west-2 --target i-00xxxxx`
+`sudo su - ec2-user`
+#### Run `sh mongo-backup.sh` from /home/ec2-user/ to test if mongodb backups are being uploaded to public s3 bucket and `crontab -l` tp test the backup cron job schedule
 
 ### EKS
-
-#### Make sure you have  aws-session-manager(for logging to ec2's, alternatively you can also use key-pair if enabled in variables and in tf ec2-*.tf code), eksctl and kubectl arte also required. 
 
 #### Push any updated Flask-web-app code to ECR or update ECR image.
 
 
+#### Deploying EKS apps - Automated
+
+1)  cd to push-yaml-coderepo from root folder to trigger pipelines
+ 
+#### Make sure to update mongodb passowrd as base64 in eks-sample-apps/secrets.yaml and apply on cluster `kubectl apply -f eks-sample-apps/secrets.yaml` - (can be retrieved from secrets manager)
+#### This will be automated using Secrets Driver for EKS in future update
+
+Run `sh deploy-pipeline.sh`
+
+#### Now start Pipeline `Deploy-apps-eks` to deploy apps to EKS
+
 #### Deploying EKS apps manually and testing 
-#### Notes:- Sg info copied has to eks yaml file due to some bug with annotation/versions
+
 
 1) Update kubeconfig
 `aws eks update-kubeconfig --region us-west-2 --name eks-lab`
 
 2) Apply yaml config to deploy web app  - port 80
 *  update security group ID in annotation (tem workaround) with name alb_security_group_eks_custom from vpc security groups- alb.ingress.kubernetes.io/security-groups: sg-02c62xxxxxx
+*  Notes:- Sg info copied has to eks yaml file due to  bug with annotations/versions with alb/eks
 
 *  `kubectl apply -f eks-sample-apps/2048_full.yaml`
 *  `kubectl get ingress/ingress-2048 -n game-2048`
 
 ##### More info on alb addon installation in main.tf - https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
 
-3) Flask web app with MngoDB
+3) Flask web app with MongoDB
 
  `kubectl apply -f eks-sample-apps/flask-web-app.yaml`
  
@@ -119,15 +135,10 @@ Infra:-
 ### Troubleshooting commands
 
 `aws secretsmanager delete-secret --secret-id mongoadminUserpassword --force-delete-without-recovery --region us-west-2`
-
+`kubectl patch ingress <name-of-the-ingress> -n<your-namespace> -p '{"metadata":{"finalizers":[]}}' --type=merge`
+`kubectl patch ingress ingress-2048 -n game-2048 -p '{"metadata":{"finalizers":[]}}' --type=merge`
 ### Secrets manager should be in place before mongo and bastion works
 
-### Login to bastion using ssm 
-
-`aws ssm start-session --region us-west-2 --target i-00xxxxx`
-`sudo su - ec2-user`
-`curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"`
-`sudo rpm -ivh sess*`
 
 
 ### Some of Modules refrenced and blogs referred from 

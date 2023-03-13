@@ -1,10 +1,8 @@
-
-variable "karpenter_version" {
-  description = "Karpenter Version"
-  default     = "0.16.2"
+variable "region" {
+  # default     = "us-west-2"
   type        = string
+  description = "The AWS Region to deploy EKS"
 }
-
 
 variable "bottlerocket_k8s_version" {
   description = "Kubernetes version for Bottlerocket AMI"

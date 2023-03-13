@@ -73,8 +73,32 @@ phases:
         fi
       - echo '***** This is the current env:'
       - printenv
-
-
+phases:
+  pre_build:
+    commands:
+  pre_build:
+    commands:
+      - echo $AWS_DEFAULT_REGION
+      - echo $AWS_ACCOUNT_ID
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - ls -al
+      - cd ./flask-web-app-docker/
+      - echo Build started on `date`
+      - echo Building the Docker image....
+      - echo $IMAGE_REPO_NAME
+      - echo $IMAGE_TAG
+      - IMAGE_TAG=latest
+      - echo $IMAGE_TAG
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker images
+      - echo $IMAGE_REPO_NAME
+      - echo $IMAGE_TAG
+      - echo $AWS_ACCOUNT_ID
+      - echo $AWS_DEFAULT_REGION
+      - docker tag "$IMAGE_REPO_NAME:$IMAGE_TAG" "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG"
+      - docker push "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG"
+      - cd ..
+      - echo "completed Docker Build and Push for $IMAGE_REPO_NAME:$IMAGE_TAG"
   build:
     commands:
           # install required binary
@@ -88,7 +112,6 @@ phases:
       - export ACCOUNT_ID=$(echo $acc)
       - export TF_VAR_region=${AWS_REGION}
       - echo $CODEBUILD_SRC_DIR
-
       - echo "yum installs"
       - "yum -y -q -e 0 install moreutils bash-completion nmap bind-utils"
       # - echo "Terraform"
@@ -117,23 +140,18 @@ phases:
       - kubectl get nodes
       - ls -l
       - sleep 4
+      # - kubectl apply -f secrets.yaml
+      - echo $db_host_ip
+      - sed -ie "s/db_host_ip/$db_host_ip/g" flask-web-app.yaml
+      - sed -ie "s/eks_alb_sg/$eks_alb_sg/g" flask-web-app.yaml
+      - sed -ie "s/eks_alb_sg/$eks_alb_sg/g" 2048_full_alb.yaml 
       - kubectl apply -f flask-web-app.yaml
       - kubectl apply -f shell-demo.yaml 
       - kubectl apply -f 2048_full_alb.yaml 
-      # - #aws eks list-clusters
-      # - terraform validate
-      # - terraform plan -out tfplan
-      # - #"cd .."
-      # - terraform apply tfplan  
-      # - #kubectl apply -f 2048_namespace.yml
-      # - #cat 2048_deployment.yml | ./subvar.sh | kubectl apply -f -
-      # - #kubectl apply -f 2048_service.yml
-      # - #kubectl apply -f 2048_ingress.yml
-      # - #kubectl get pods,svc,ingress -n game-204
-      # - #echo "kubectl get ingress/ingress-2048 -n game-2048"
   post_build:
     commands:
       - echo "completed on `date`"
+      - kubectl get pods -A
 
 
 artifacts:

@@ -14,10 +14,7 @@ git clone codecommit::$AWS_REGION://eksworkshop-app
 cd eksworkshop-app
 cp ../buildspec.yml .
 cp ../buildspec-delete.yml .
-cp ../../eks-sample-apps/* .
-cp ../
-cp ../*.tf .
-
+yes | cp -r -i ../../eks-sample-apps/* .
 
 git add --all
 git commit -m "Initial commit."

@@ -10,16 +10,14 @@
 
 resource "random_password" "bucket_hash" {
   length           = 7
-  special          = true
-  # override_special = "_%@"
+  special          = false
+  upper = false
 }
 
 resource "aws_s3_bucket" "codepipeline-bucket" {
-  bucket = "codep-tfeks-${random_password.bucket_hash.id}"
+  bucket = "codep-tfeks-${random_password.bucket_hash.result}"
   tags           = {}
-
-  force_destroy = false
-
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_versioning" "codepipeline-bucket" {

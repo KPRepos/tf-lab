@@ -32,7 +32,7 @@ spec:
                 name: flaskapi-secrets
                 key: mongodb_password
           - name: db_host
-            value: 10.0.8.248
+            value: db_host_ip
 ---
 apiVersion: v1
 kind: Service
@@ -58,7 +58,7 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/security-groups: sg-029a3f0a7d15bc9d4
+    alb.ingress.kubernetes.io/security-groups: eks_alb_sg
 spec:
   ingressClassName: alb
   rules:

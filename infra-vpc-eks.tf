@@ -16,7 +16,7 @@ data "aws_caller_identity" "current" {}
 
 locals {
   # name   = "lab-${replace(basename(path.cwd), "_", "-")}"
-  name = "lab-latest"
+  name = var.env_name
   region = var.region
 
   vpc_cidr = "10.0.0.0/16"
@@ -273,14 +273,6 @@ module "lb_role" {
   }
 }
 
-
-  variable "env_name" {
-    type = string
-    default = "eks-lab1"
-  }
-
-
-
 provider "helm" {
   kubernetes {
     host                   = module.eks.cluster_endpoint
@@ -402,50 +394,16 @@ tags = {
   }
 }
 
-resource "aws_s3_bucket" "public_s3_lab_mongo" {
 
-  bucket = "public-s3-lab-mongo"
-  acl    = "public-read"
-  tags = {
-    Name        = "public-s3-lab-mongo1"
-    # Environment = var.environment
-  }
+resource "aws_security_group_rule" "Custom_Security_Group_Rule_for_alb" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  source_security_group_id       = aws_security_group.alb_security_group_eks_custom.id
+  security_group_id = module.eks.cluster_security_group_id
 }
 
-resource "aws_s3_bucket_public_access_block" "public_s3_lab_mongo_public_access_block" {
-  bucket = aws_s3_bucket.public_s3_lab_mongo.id
-
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = true
-  restrict_public_buckets = false
-}
-
-resource "aws_s3_bucket_policy" "allow_access_everyone" {
-  bucket = aws_s3_bucket.public_s3_lab_mongo.id
-  policy = data.aws_iam_policy_document.allow_access_everyone.json
-}
-
-data "aws_iam_policy_document" "allow_access_everyone" {
-  statement {
-    actions = ["s3:ListBucket",]
-    resources = [aws_s3_bucket.public_s3_lab_mongo.arn,]
-    # effect = "Allow"
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-  }
-  statement {
-    actions   = ["s3:GetObject",]
-    resources =  [aws_s3_bucket.public_s3_lab_mongo.arn,"${aws_s3_bucket.public_s3_lab_mongo.arn}/*"]
-    effect = "Allow"
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-  }
-}
 
 
 data "tls_certificate" "cluster" {

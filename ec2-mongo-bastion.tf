@@ -1,5 +1,59 @@
+resource "random_password" "bucket_hash" {
+  length           = 7
+  special          = false
+  upper = false
+}
+
+resource "aws_s3_bucket" "public_s3_lab_mongo" {
+
+  bucket = "public-s3-lab-mongo-${random_password.bucket_hash.result}"
+  acl    = "public-read"
+  force_destroy = true
+  tags = {
+    Name        = "public-s3-lab-mongo1"
+    # Environment = var.environment
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "public_s3_lab_mongo_public_access_block" {
+  bucket = aws_s3_bucket.public_s3_lab_mongo.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = true
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "allow_access_everyone" {
+  bucket = aws_s3_bucket.public_s3_lab_mongo.id
+  policy = data.aws_iam_policy_document.allow_access_everyone.json
+}
+
+data "aws_iam_policy_document" "allow_access_everyone" {
+  statement {
+    actions = ["s3:ListBucket",]
+    resources = [aws_s3_bucket.public_s3_lab_mongo.arn,]
+    # effect = "Allow"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
+  statement {
+    actions   = ["s3:GetObject",]
+    resources =  [aws_s3_bucket.public_s3_lab_mongo.arn,"${aws_s3_bucket.public_s3_lab_mongo.arn}/*"]
+    effect = "Allow"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
+}
+
+
+
 data "template_file" "mongo_user_data" {
-  template = "${file("templates/mongo_user_data.sh")}"
+  template = "${file("userdata-scripts/mongo_user_data.sh")}"
 
   vars = {
     backup_s3_bucket       = "${aws_s3_bucket.public_s3_lab_mongo.id}"
@@ -11,12 +65,9 @@ data "template_file" "mongo_user_data" {
 }
 
 resource "aws_instance" "MongoDB" {
-  # count                = 0
   count = var.deploy_mongo  == "yes" ? 1 : 0
-  # ami                  = "ami-0f1a5f5ada0e7da53"
   ami                  = var.ami_id_mongo # older than 1 year
   instance_type        = "t3.small"
-  # key_name             = "kp-2023"
   user_data            = "${data.template_file.mongo_user_data.rendered}"
   iam_instance_profile = aws_iam_instance_profile.mongo-ec2-role.name
   vpc_security_group_ids = [aws_security_group.mongodb_security_group.id]
@@ -84,7 +135,7 @@ tags = {
 }
 
 data "template_file" "bastion_user_data" {
-  template = "${file("templates/bastion_user_data.sh")}"
+  template = "${file("userdata-scripts/bastion_user_data.sh")}"
   # count = var.deploy_mongo  == "yes" ? 1 : 0
   vars = {
     backup_s3_bucket       = "${aws_s3_bucket.public_s3_lab_mongo.id}"
@@ -95,7 +146,6 @@ data "template_file" "bastion_user_data" {
 }
 
 resource "aws_instance" "bastion" {
-  # count                = 0
   count = var.deploy_bastion  == "yes" ? 1 : 0
   ami                  = var.ami_id_bastion 
   instance_type        = "t3.micro"

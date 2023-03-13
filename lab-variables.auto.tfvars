@@ -1,6 +1,6 @@
-key_name = "kp-2023"
 region = "us-west-2"
 cluster-name = "eks-lab"
+env_name = "lab-latest"
 deploy_bastion = "yes"
 deploy_mongo = "yes"
 ami_id_bastion = "ami-0f1a5f5ada0e7da53" # Latest AMI

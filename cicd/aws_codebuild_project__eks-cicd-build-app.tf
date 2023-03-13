@@ -24,10 +24,39 @@ resource "aws_codebuild_project" "eks-cicd-build-app" {
 
   environment {
     compute_type                = "BUILD_GENERAL1_SMALL"
-    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:3.0" 
     image_pull_credentials_type = "CODEBUILD"
-    privileged_mode             = false
+    privileged_mode             = true
     type                        = "LINUX_CONTAINER"
+    environment_variable {
+      name  = "AWS_DEFAULT_REGION"
+      value = var.region
+    }
+    environment_variable {
+      name  = "AWS_ACCOUNT_ID"
+      value = data.aws_caller_identity.current.account_id
+    }
+
+    environment_variable {
+      name  = "IMAGE_REPO_NAME"
+      value = "${aws_ecr_repository.flask-web-app.name}"
+    }
+
+    environment_variable {
+      name  = "IMAGE_TAG"
+      value = "latest"
+    }
+    
+    environment_variable {
+      name  = "db_host_ip"
+      value = "${data.terraform_remote_state.infra.outputs.mongo_host_ip}"
+    }
+    
+    environment_variable {
+      name  = "eks_alb_sg"
+      value = "${data.terraform_remote_state.infra.outputs.eks_alb_sg}"
+    }
+   
   }
 
   logs_config {

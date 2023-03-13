@@ -1,3 +1,33 @@
+
+################################################################################
+# Custom outputs
+################################################################################
+
+output "vpc_id" {
+  description = "vpc id"
+  value = "${module.vpc.vpc_id}"
+  }
+  
+ output "private_subnets" {
+   description = "Subnet ID"
+   value = "${module.vpc.private_subnets}"
+ }
+ 
+  output "public_subnets" {
+   description = "Subnet ID"
+   value = "${module.vpc.public_subnets}"
+ }
+ 
+  output "mongo_host_ip" {
+   description = "mongo_host_ip"
+   value = "${aws_instance.MongoDB[0].private_ip}"
+ }
+ 
+  output "eks_alb_sg" {
+   description = "alb security group for eks"
+   value = "${aws_security_group.alb_security_group_eks_custom.id}"
+ }
+
 ################################################################################
 # Cluster
 ################################################################################
