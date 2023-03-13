@@ -6,7 +6,7 @@
 * VPC with 3 subnets, bastion, mongodb, secretsmanager for mongo secret, EKS, EKS-ALB addon, OIDC Provider for RBAC, S3 Bucket(Public), Cluster Role for Pods
 * Public for ALB's
 * Private for most of AWS Resources 
-* Intra for EKS COntrol Panel 
+* Intra for EKS Control Panel 
 
 ### Architecture Diagram 
 ![](tf-lab.jpg)
@@ -36,21 +36,23 @@ Infra:-
 
 `https://{bucketname}.s3.us-west-2.amazonaws.com/`
 
-### To terminate ec2 example from MongoDB Instance (Mongo Instance have ec2*, but bastion has no elevated access)
-#### Make sure you have  aws-session-manager(for logging to ec2's, alternatively you can also use key-pair if enabled in variables and in tf ec2-*.tf code), eksctl and kubectl arte also required. 
+##### To terminate ec2 example from MongoDB Instance (Mongo Instance have ec2*, but bastion has no elevated access)
+##### Make sure you have  aws-session-manager(for logging to ec2's, alternatively you can also use key-pair if enabled in variables and in tf ec2-*.tf code), eksctl and kubectl arte also required. 
+
 `curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"`
 `sudo rpm -ivh sess*`
-### Login to MongoDb using ssm 
+
+#### Login to MongoDb using ssm 
 
 `aws ssm start-session --region us-west-2 --target i-00xxxxx`
 `sudo su - ec2-user`
 
 Deploy a test ec2 and use `aws ec2 terminate-instances --region us-west-2 --instance-ids i-xxx` to terminate it 
  
-### Login to bastion 
+* Login to bastion 
 `aws ssm start-session --region us-west-2 --target i-00xxxxx`
 `sudo su - ec2-user`
-#### Run `sh mongo-backup.sh` from /home/ec2-user/ to test if mongodb backups are being uploaded to public s3 bucket and `crontab -l` tp test the backup cron job schedule
+* Run `sh mongo-backup.sh` from /home/ec2-user/ to test if mongodb backups are being uploaded to public s3 bucket and `crontab -l` tp test the backup cron job schedule
 
 ### EKS
 
@@ -61,8 +63,8 @@ Deploy a test ec2 and use `aws ec2 terminate-instances --region us-west-2 --inst
 
 1)  cd to push-yaml-coderepo from root folder to trigger pipelines
  
-#### Make sure to update mongodb passowrd as base64 in eks-sample-apps/secrets.yaml and apply on cluster `kubectl apply -f eks-sample-apps/secrets.yaml` - (can be retrieved from secrets manager)
-#### Make sure the password is in base64 format (echo -n 'password' | base64) This will be automated using Secrets Driver for EKS in future update
+*  Make sure to update mongodb passowrd as base64 in eks-sample-apps/secrets.yaml and apply on cluster `kubectl apply -f eks-sample-apps/secrets.yaml` - (can be retrieved from secrets manager)
+*  Make sure the password is in base64 format (echo -n 'password' | base64) This will be automated using Secrets Driver for EKS in future update
 
 Run `sh deploy-pipeline.sh`
 
@@ -75,8 +77,8 @@ Run `sh deploy-pipeline.sh`
 `aws eks update-kubeconfig --region us-west-2 --name eks-lab`
 
 2) Apply yaml config to deploy web app  - port 80
-*  update security group ID in annotation (tem workaround) with name alb_security_group_eks_custom from vpc security groups- alb.ingress.kubernetes.io/security-groups: sg-02c62xxxxxx
-*  Notes:- Sg info copied has to eks yaml file due to  bug with annotations/versions with alb/eks
+*  update security group ID in annotation with name alb_security_group_eks_custom from vpc security groups- alb.ingress.kubernetes.io/security-groups: sg-02c62xxxxxx ( This was automatically taken care in cicd)
+*  Notes:- Sg info copied has to eks yaml file due to  bug with annotations/versions with alb/eks and is a temperory workaround. 
 
 *  `kubectl apply -f eks-sample-apps/2048_full.yaml`
 *  `kubectl get ingress/ingress-2048 -n game-2048`
@@ -95,31 +97,31 @@ Run `sh deploy-pipeline.sh`
 
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
 
-####  * Lab-eks-pod-cluster-admin service account was mapped to a custom cluster-admin role with admin privilages 
-####  * Test cluster-admin custom role access for a pod which was provided via RBAC
+*  Lab-eks-pod-cluster-admin service account was mapped to a custom cluster-admin role with admin privilages 
+*  Test cluster-admin custom role access for a pod which was provided via RBAC
 
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
 
-`apt-get update
+`apt-get update`
 
-apt-get install -y curl
+`apt-get install -y curl`
 
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+`curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"`
 
-install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+`install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl`
 
-kubectl get pods -A`
+`kubectl get pods -A`
 
 
 #### * Test AWS IAM Access for pods with write access to s3
 #### * The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have s3:GetBucket", "s3:GetObject", "s3:PutObject access on * 
 
 
-`apt-get update
+`apt-get update`
 
-apt-get install -y awscli
+`apt-get install -y awscli`
 
-touch test-rbac'
+`touch test-rbac`
 
 `aws s3api put-object --bucket test44242 --key test-rbac --body ./test-rbac`
 
@@ -129,7 +131,7 @@ touch test-rbac'
 2) More cleanup within Security Groups
 3) AWS Secrets manager addon for kubernetes 
 4) Cleanup of Readonly Public S3 Bucket, MongoDB IAM permissions, RBAC-Cluster Admin
-5) SG-ALb Bug
+5) SG-ALb Bug fix
 
 
 ### Troubleshooting commands
@@ -140,7 +142,7 @@ touch test-rbac'
 
 
 
-### Some of Modules refrenced and blogs referred from 
+#### Some of Modules refrenced and blogs referred from 
 1) https://github.com/terraform-aws-modules/terraform-aws-eks
 2) https://github.com/KPRepos/terraform-ecs-app
 3) https://towardsdatascience.com/how-to-deploy-a-flask-api-in-kubernetes-and-connect-it-with-other-micro-services-af16965b67fe
@@ -150,8 +152,8 @@ touch test-rbac'
 7) https://hackmd.io/@pmanzoni/r1uWcTqfU
 
 
-## Userdata scripts
+#### Userdata scripts
 
-1) templates/app_user_data.sh = This is mongodb userdata that creates an admin password retreived from secrets manager and creates a dummy collection of data such that backups can work.
+1) userdata-scripts/mongo_user_data.sh = This is mongodb userdata that creates an admin password retreived from secrets manager and creates a dummy collection of data such that backups can work.
 
-2) templates/bastion_user_data.sh = This is for bastion ec2, which will create a cron job to connect to mongodb and initaie backup, mongodb password info will be retrieved from secrets manager.
+2) userdata-scripts/bastion_user_data.sh = This is for bastion ec2, which will create a cron job to connect to mongodb and initaie backup, mongodb password info will be retrieved from secrets manager.
