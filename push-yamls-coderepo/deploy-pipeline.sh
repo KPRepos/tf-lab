@@ -16,6 +16,10 @@ cp ../buildspec.yml .
 cp ../buildspec-delete.yml .
 yes | cp -r -i ../../eks-sample-apps/* .
 
+# git pull 
 git add --all
 git commit -m "Initial commit."
-git push
+git fetch
+# git push
+git push -f origin master
+

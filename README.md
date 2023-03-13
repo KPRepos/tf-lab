@@ -62,7 +62,7 @@ Deploy a test ec2 and use `aws ec2 terminate-instances --region us-west-2 --inst
 1)  cd to push-yaml-coderepo from root folder to trigger pipelines
  
 #### Make sure to update mongodb passowrd as base64 in eks-sample-apps/secrets.yaml and apply on cluster `kubectl apply -f eks-sample-apps/secrets.yaml` - (can be retrieved from secrets manager)
-#### This will be automated using Secrets Driver for EKS in future update
+#### Make sure the password is in base64 format (echo -n 'password' | base64) This will be automated using Secrets Driver for EKS in future update
 
 Run `sh deploy-pipeline.sh`
 
@@ -100,36 +100,36 @@ Run `sh deploy-pipeline.sh`
 
 `kubectl exec --stdin --tty shell-demo -- /bin/bash`
 
-`apt-get update`
+`apt-get update
 
-`apt-get install -y curl`
+apt-get install -y curl
 
-`curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"`
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 
-`install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl`
+install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-`kubectl get pods -A`
+kubectl get pods -A`
 
 
 #### * Test AWS IAM Access for pods with write access to s3
 #### * The roles defined in lab-eks-pod-cluster-admin aka eks-service-account-role have s3:GetBucket", "s3:GetObject", "s3:PutObject access on * 
 
 
-`apt-get update`
+`apt-get update
 
-`apt-get install -y awscli`
+apt-get install -y awscli
 
-`touch test-rbac`
+touch test-rbac'
 
 `aws s3api put-object --bucket test44242 --key test-rbac --body ./test-rbac`
 
 
 ###  Future Improvements
-1) ec2-key need to be created manually. We don't actaully need any key nor a public subnet for bastion,  use session manager to login to bastion 
-2) Tags can be appended to IAM and S3 to support multi env deploymenet within same AWS Account
-3) More cleanup within Security Groups
-4) AWS Secrets manager addon for kubernetes 
-5) Cleanup of Readonly Public S3 Bucket, MongoDB IAM permissions, RBAC-Cluster Admin
+1) Tags can be appended to IAM and S3 to support multi env deploymenet within same AWS Account
+2) More cleanup within Security Groups
+3) AWS Secrets manager addon for kubernetes 
+4) Cleanup of Readonly Public S3 Bucket, MongoDB IAM permissions, RBAC-Cluster Admin
+5) SG-ALb Bug
 
 
 ### Troubleshooting commands
@@ -137,7 +137,6 @@ Run `sh deploy-pipeline.sh`
 `aws secretsmanager delete-secret --secret-id mongoadminUserpassword --force-delete-without-recovery --region us-west-2`
 `kubectl patch ingress <name-of-the-ingress> -n<your-namespace> -p '{"metadata":{"finalizers":[]}}' --type=merge`
 `kubectl patch ingress ingress-2048 -n game-2048 -p '{"metadata":{"finalizers":[]}}' --type=merge`
-### Secrets manager should be in place before mongo and bastion works
 
 
 

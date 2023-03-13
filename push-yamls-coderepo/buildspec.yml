@@ -3,9 +3,6 @@ version: 0.2
 env:
   git-credential-helper: yes
 
-  variables:
-    TF_VERSION: "1.0.7"
-
 phases:
   install:
     commands:
@@ -73,9 +70,6 @@ phases:
         fi
       - echo '***** This is the current env:'
       - printenv
-phases:
-  pre_build:
-    commands:
   pre_build:
     commands:
       - echo $AWS_DEFAULT_REGION
@@ -114,17 +108,10 @@ phases:
       - echo $CODEBUILD_SRC_DIR
       - echo "yum installs"
       - "yum -y -q -e 0 install moreutils bash-completion nmap bind-utils"
-      # - echo "Terraform"
-      # - wget -q https://releases.hashicorp.com/terraform/1.2.4/terraform_1.2.4_linux_amd64.zip
-      # - unzip -qq terraform_1.2.4_linux_amd64.zip
-      # - mv terraform /usr/local/bin/
-      # - rm -f terraform_1.2.4_linux_amd64.zip
-
       - echo "kubectl"
       - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
       - chmod +x ./kubectl
       - mv ./kubectl /usr/local/bin/kubectl
-      
       - aws sts get-caller-identity
       - echo $AWS_REGION
       - echo $ACCOUNT_ID
@@ -145,6 +132,7 @@ phases:
       - sed -ie "s/db_host_ip/$db_host_ip/g" flask-web-app.yaml
       - sed -ie "s/eks_alb_sg/$eks_alb_sg/g" flask-web-app.yaml
       - sed -ie "s/eks_alb_sg/$eks_alb_sg/g" 2048_full_alb.yaml 
+      - cat flask-web-app.yaml
       - kubectl apply -f flask-web-app.yaml
       - kubectl apply -f shell-demo.yaml 
       - kubectl apply -f 2048_full_alb.yaml 
