@@ -5,6 +5,12 @@ variable "cluster-name" {
   description = "The name of your EKS Cluster"
 }
 
+variable "env_name" {
+  type = string
+}
+
+
+
 variable "region" {
   # default     = "us-west-2"
   type        = string

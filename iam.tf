@@ -41,8 +41,7 @@ resource "aws_iam_role_policy" "bastion_iam_role_policy" {
       "Effect": "Allow",
       "Action": [
         "s3:PutObject",
-        "s3:GetObject",
-        "s3:DeleteObject"
+        "s3:GetObject"
       ],
       "Resource": ["${aws_s3_bucket.public_s3_lab_mongo.arn}/*"]
     },

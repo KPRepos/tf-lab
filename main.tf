@@ -495,3 +495,48 @@ resource "kubernetes_service_account" "eks-service-account" {
     }
   }
 }
+
+
+resource "aws_iam_role" "eks-service-account-aws-secrets-role" {
+  name = "aws_secrets_sa_eks"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = ["sts:AssumeRoleWithWebIdentity"]
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Federated = module.eks.oidc_provider_arn
+        }
+      },
+    ]
+  })
+
+  inline_policy {
+    name = "eks_service_account_policy"
+
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret", "secretsmanager:ListSecretVersionIds", "secretsmanager:GetResourcePolicy" ]
+          Effect   = "Allow"
+          Resource = "*"
+        },
+      ]
+    })
+  }
+}
+
+
+# resource "kubernetes_service_account" "eks-service-account-aws-secrets" {
+#   metadata {
+#     name = "lab-eks-aws_secrets_sa"
+#     namespace = "default"
+#     annotations = {
+#       "eks.amazonaws.com/role-arn" = aws_iam_role.eks-service-account-role.arn
+#     }
+#   }
+# }

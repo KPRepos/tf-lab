@@ -13,13 +13,3 @@ output "vpc_id" {
    value = "${module.vpc.public_subnets}"
  }
  
- 
- 
- 
-#  "${module.vpc.aws_subnet.private[1]}
- 
-# #  "${module.vpc.aws_subnet.public[0]}
- 
-#  "${module.vpc.aws_subnet.public[1]}
-
-#  module.vpc.private_subnets[0]
